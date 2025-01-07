@@ -108,12 +108,15 @@ window.addEventListener('DOMContentLoaded', () => {
           modal = document.querySelector('.modal'),
           modalCloseBtn = document.querySelector('[data-close]');
     
+    function openModal() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden';
+        clearInterval(modalTimerId);
+    }
+          
     modalTrigger.forEach(btn => {
-        btn.addEventListener('click', () => {
-            modal.classList.add('show');
-            modal.classList.remove('hide');
-            document.body.style.overflow = 'hidden';
-        });
+        btn.addEventListener('click', openModal);
     });
 
     function closeModal() {
@@ -131,10 +134,23 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.code === "Escape") {
+        if (e.code === "Escape" && modal.classList.contains('show')) {
             closeModal();
         }
     });
+
+    const modalTimerId = setTimeout(openModal, 3000);
+
+    function showModalByScroll() {
+        if (window.scrollY + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            openModal();
+            window.removeEventListener('scroll', showModalByScroll);
+            // вместо once true
+        }
+    };
+
+    window.addEventListener('scroll', showModalByScroll);
+    // {once:true} можно добавить, у меня она срабатывает, у других сразу выскакивает окно после первого скролла.
 });
 
 console.log(getTimeRemaining(deadline));
